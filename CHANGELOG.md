@@ -1,3 +1,5 @@
+## 0.0.7+1
+* add conditional imports for different platform implementations
 ## 0.0.7
 * update to null-safety
 * update dependencies
