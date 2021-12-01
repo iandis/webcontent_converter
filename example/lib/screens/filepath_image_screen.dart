@@ -3,7 +3,7 @@ import 'dart:typed_data' show Uint8List;
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:webcontent_converter/webcontent_converter.dart';
+import 'package:webcontent_converter2/webcontent_converter.dart';
 
 class FilePathToImageScreen extends StatefulWidget {
   @override

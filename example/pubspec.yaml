@@ -18,7 +18,7 @@ dependencies:
   # esc_pos_printer: 
   #   path: ../../esc_pos_printer
 
-  webcontent_converter:
+  webcontent_converter2:
     # When depending on this package from a real application you should use:
     #   webcontent_converter: ^x.y.z
     # See https://dart.dev/tools/pub/dependencies#version-constraints

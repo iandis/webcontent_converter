@@ -3,9 +3,10 @@ import 'dart:async';
 import 'dart:html' as html;
 import 'dart:typed_data';
 
+// ignore: avoid_classes_with_only_static_members
 class WebSupport {
   static Future<String> toBlob() async {
-    final canvas = html.CanvasElement();
+    final html.CanvasElement canvas = html.CanvasElement();
     canvas.innerHtml = """
     <!DOCTYPE html>
       <html>
@@ -29,7 +30,7 @@ class WebSupport {
       </html>
     """;
     canvas.context2D;
-    final image = canvas.toDataUrl('image/png');
+    final String image = canvas.toDataUrl();
     // var img = new html.ImageElement();
     // img.src = image;
     // html.document.body.children.add(img);
@@ -39,11 +40,12 @@ class WebSupport {
     // return blob;
   }
 
-  static Future<Uint8List> getBlobData(html.Blob blob) async {
-    final completer = Completer<Uint8List>();
+  static Future<Uint8List?> getBlobData(html.Blob blob) async {
+    final completer = Completer<Uint8List?>();
     final reader = html.FileReader();
     reader.readAsArrayBuffer(blob);
-    reader.onLoad.listen((_) => completer.complete(reader.result));
-    return (await completer.future);
+    reader.onLoad
+        .listen((_) => completer.complete(reader.result as Uint8List?));
+    return completer.future;
   }
 }
