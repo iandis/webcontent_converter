@@ -18,10 +18,10 @@ export 'webview_widget.dart';
 /// [WebcontentConverter] will convert html, html file, web uri, into raw bytes image or pdf file
 class WebcontentConverter {
   static const MethodChannel _channel =
-      const MethodChannel('webcontent_converter');
+      MethodChannel('webcontent_converter');
 
   static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
+    final String version = await _channel.invokeMethod('getPlatformVersion') as String;
     return version;
   }
 
@@ -62,21 +62,19 @@ class WebcontentConverter {
   /// }
   /// ```
   static Future<Uint8List> filePathToImage({
-    @required String path,
-    double duration: 2000,
-    String executablePath,
+    required String path,
+    double duration = 2000,
+    String? executablePath,
   }) async {
     Uint8List result = Uint8List.fromList([]);
     try {
-      String content = await rootBundle.loadString(path);
+      final String content = await rootBundle.loadString(path);
 
-      if (content != null) {
-        result = await contentToImage(
-          content: content,
-          duration: duration,
-          executablePath: executablePath,
-        );
-      }
+      result = await contentToImage(
+        content: content,
+        duration: duration,
+        executablePath: executablePath,
+      );
     } on Exception catch (e) {
       WebcontentConverter.logger.error("[method:filePathToImage]: $e");
       throw Exception("Error: $e");
@@ -97,9 +95,9 @@ class WebcontentConverter {
   /// }
   /// ```
   static Future<Uint8List> webUriToImage({
-    @required String uri,
-    double duration: 2000,
-    String executablePath,
+    required String uri,
+    double duration = 2000,
+    String? executablePath,
   }) async {
     Uint8List result = Uint8List.fromList([]);
     try {
@@ -131,9 +129,9 @@ class WebcontentConverter {
   /// }
   /// ```
   static Future<Uint8List> contentToImage({
-    @required String content,
-    double duration: 2000,
-    String executablePath,
+    required String content,
+    double duration = 2000,
+    String? executablePath,
   }) async {
     final Map<String, dynamic> arguments = {
       'content': content,
@@ -152,12 +150,12 @@ class WebcontentConverter {
       }
       if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
         WebcontentConverter.logger.info("Desktop support");
-        var browser = await pp.puppeteer.launch(executablePath: executablePath);
-        var page = await browser.newPage();
+        final pp.Browser browser = await pp.puppeteer.launch(executablePath: executablePath);
+        final pp.Page page = await browser.newPage();
         await page.setContent(content, wait: pp.Until.load);
         await page.emulateMediaType(pp.MediaType.print);
-        var offsetHeight = await page.evaluate('document.body.offsetHeight');
-        var offsetWidth = await page.evaluate('document.body.offsetWidth');
+        final num offsetHeight = await page.evaluate<num>('document.body.offsetHeight');
+        final num offsetWidth = await page.evaluate<num>('document.body.offsetWidth');
         results = await page.screenshot(
           format: pp.ScreenshotFormat.png,
           clip: pp.Rectangle.fromPoints(
@@ -168,7 +166,7 @@ class WebcontentConverter {
         await page.close();
       } else {
         WebcontentConverter.logger.info("Mobile support");
-        results = await _channel.invokeMethod('contentToImage', arguments);
+        results = await _channel.invokeMethod('contentToImage', arguments) as Uint8List;
       }
     } on Exception catch (e) {
       WebcontentConverter.logger.error("[method:contentToImage]: $e");
@@ -197,27 +195,25 @@ class WebcontentConverter {
   /// );
   ///```
 
-  static Future<String> filePathToPdf({
-    @required String path,
-    double duration: 2000,
-    @required String savedPath,
-    PdfMargins margins,
-    PaperFormat format: PaperFormat.a4,
-    String executablePath,
+  static Future<String?> filePathToPdf({
+    required String path,
+    double duration = 2000,
+    required String savedPath,
+    PdfMargins? margins,
+    PaperFormat format = PaperFormat.a4,
+    String? executablePath,
   }) async {
-    var result;
+    String? result;
     try {
-      String content = await rootBundle.loadString(path);
-      if (content != null) {
-        result = await contentToPDF(
-          content: content,
-          duration: duration,
-          savedPath: savedPath,
-          margins: margins,
-          format: format,
-          executablePath: executablePath,
-        );
-      }
+      final String content = await rootBundle.loadString(path);
+      result = await contentToPDF(
+        content: content,
+        duration: duration,
+        savedPath: savedPath,
+        margins: margins,
+        format: format,
+        executablePath: executablePath,
+      );
     } on Exception catch (e) {
       WebcontentConverter.logger.error("[method:filePathToPdf]: $e");
       throw Exception("Error: $e");
@@ -236,15 +232,15 @@ class WebcontentConverter {
   ///     savedPath: savedPat,
   /// );
   /// ```
-  static Future<String> webUriToPdf({
-    @required String uri,
-    double duration: 2000,
-    @required String savedPath,
-    PdfMargins margins,
-    PaperFormat format: PaperFormat.a4,
-    String executablePath,
+  static Future<String?> webUriToPdf({
+    required String uri,
+    double duration = 2000,
+    required String savedPath,
+    PdfMargins? margins,
+    PaperFormat format = PaperFormat.a4,
+    String? executablePath,
   }) async {
-    var result;
+    String? result;
     try {
       var response = await Dio().get(uri);
       final String content = response.data.toString();
@@ -277,15 +273,15 @@ class WebcontentConverter {
   ///     margins: PdfMargins.px(top: 55, bottom: 55, right: 55, left: 55),
   /// );
   /// ```
-  static Future<String> contentToPDF({
-    @required String content,
-    double duration: 2000,
-    @required String savedPath,
-    PdfMargins margins,
-    PaperFormat format: PaperFormat.a4,
-    String executablePath,
+  static Future<String?> contentToPDF({
+    required String content,
+    double duration = 2000,
+    required String savedPath,
+    PdfMargins? margins,
+    PaperFormat format = PaperFormat.a4,
+    String? executablePath,
   }) async {
-    PdfMargins _margins = margins ?? PdfMargins.zero;
+    final PdfMargins _margins = margins ?? PdfMargins.zero;
     final Map<String, dynamic> arguments = {
       'content': content,
       'duration': duration,
@@ -293,10 +289,10 @@ class WebcontentConverter {
       'margins': _margins.toMap(),
       'format': format.toMap(),
     };
-    WebcontentConverter.logger.info(arguments['savedPath']);
-    WebcontentConverter.logger.info(arguments['margins']);
-    WebcontentConverter.logger.info(arguments['format']);
-    var result;
+    WebcontentConverter.logger.info(arguments['savedPath'] as String);
+    WebcontentConverter.logger.info(arguments['margins'] as Map<String, num>);
+    WebcontentConverter.logger.info(arguments['format'] as Map<String, num>);
+    String? result;
     try {
       if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
         WebcontentConverter.logger.info("Desktop support");
@@ -327,7 +323,7 @@ class WebcontentConverter {
         result = savedPath;
       } else if (Platform.isAndroid || Platform.isIOS) {
         WebcontentConverter.logger.info("Mobile support");
-        result = await _channel.invokeMethod('contentToPDF', arguments);
+        result = await _channel.invokeMethod('contentToPDF', arguments) as String;
       } else {
         // todo web
         result = null;
@@ -340,7 +336,7 @@ class WebcontentConverter {
   }
 
   /// [WevView]
-  static Widget webivew(String content, {double width, double height}) =>
+  static Widget webivew(String content, {double? width, double? height}) =>
       WebViewWidget(
         content,
         width: width,

@@ -5,15 +5,15 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 class WebViewWidget extends StatelessWidget {
-  final String content;
-  final double width;
-  final double height;
-
-  const WebViewWidget(this.content, {Key key, this.width, this.height})
+  const WebViewWidget(this.content, {Key? key, this.width, this.height})
       : super(key: key);
+
+  final String content;
+  final double? width;
+  final double? height;
+
   @override
   Widget build(BuildContext context) {
-    assert(content != null);
     return LayoutBuilder(builder: (_, ctn) {
       final _width = width ?? ctn.maxWidth;
       final _height = height ?? ctn.maxHeight;
@@ -29,7 +29,7 @@ class WebViewWidget extends StatelessWidget {
     /// using [Hybrid Composition]
     /// ref: `https://flutter.dev/docs/development/platform-integration/platform-views`
     // This is used in the platform side to register the view.
-    final String viewType = 'webview-view-type';
+    const String viewType = 'webview-view-type';
     // Pass parameters to the platform side.
     final Map<String, dynamic> creationParams = <String, dynamic>{};
     creationParams['width'] = width;
@@ -43,7 +43,7 @@ class WebViewWidget extends StatelessWidget {
           surfaceFactory:
               (BuildContext context, PlatformViewController controller) {
             return AndroidViewSurface(
-              controller: controller,
+              controller: controller as AndroidViewController,
               gestureRecognizers: const <
                   Factory<OneSequenceGestureRecognizer>>{},
               hitTestBehavior: PlatformViewHitTestBehavior.opaque,
@@ -55,7 +55,7 @@ class WebViewWidget extends StatelessWidget {
               viewType: viewType,
               layoutDirection: TextDirection.ltr,
               creationParams: creationParams,
-              creationParamsCodec: StandardMessageCodec(),
+              creationParamsCodec: const StandardMessageCodec(),
             )
               ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
               ..create();
