@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:html' as html;
 import 'dart:typed_data';
 
+// ignore: avoid_classes_with_only_static_members
 class WebSupport {
   static Future<String> toBlob() async {
     final html.CanvasElement canvas = html.CanvasElement();

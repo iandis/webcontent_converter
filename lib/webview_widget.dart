@@ -5,8 +5,12 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 class WebViewWidget extends StatelessWidget {
-  const WebViewWidget(this.content, {Key? key, this.width, this.height})
-      : super(key: key);
+  const WebViewWidget(
+    this.content, {
+    Key? key,
+    this.width,
+    this.height,
+  }) : super(key: key);
 
   final String content;
   final double? width;
@@ -14,15 +18,17 @@ class WebViewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (_, ctn) {
-      final _width = width ?? ctn.maxWidth;
-      final _height = height ?? ctn.maxHeight;
-      return SizedBox(
-        width: _width,
-        height: _height,
-        child: child(_width, _height),
-      );
-    });
+    return LayoutBuilder(
+      builder: (_, ctn) {
+        final _width = width ?? ctn.maxWidth;
+        final _height = height ?? ctn.maxHeight;
+        return SizedBox(
+          width: _width,
+          height: _height,
+          child: child(_width, _height),
+        );
+      },
+    );
   }
 
   Widget child(double width, double height) {
@@ -40,8 +46,10 @@ class WebViewWidget extends StatelessWidget {
       case TargetPlatform.android:
         return PlatformViewLink(
           viewType: viewType,
-          surfaceFactory:
-              (BuildContext context, PlatformViewController controller) {
+          surfaceFactory: (
+            BuildContext context,
+            PlatformViewController controller,
+          ) {
             return AndroidViewSurface(
               controller: controller as AndroidViewController,
               gestureRecognizers: const <

@@ -77,8 +77,12 @@ class PaperFormat {
 }
 
 class PdfMargins {
-  const PdfMargins(
-      {this.top = 0, this.bottom = 0, this.left = 0, this.right = 0});
+  const PdfMargins({
+    this.top = 0,
+    this.bottom = 0,
+    this.left = 0,
+    this.right = 0,
+  });
 
   const PdfMargins.inches({num? top, num? bottom, num? left, num? right})
       : top = top ?? 0,
@@ -87,8 +91,12 @@ class PdfMargins {
         right = right ?? 0;
 
   /// [PdfMargins.px] then return in Inches
-  factory PdfMargins.px(
-      {int top = 0, int bottom = 0, int left = 0, int right = 0}) {
+  factory PdfMargins.px({
+    int top = 0,
+    int bottom = 0,
+    int left = 0,
+    int right = 0,
+  }) {
     return PdfMargins.inches(
       top: _pxToInches(top),
       bottom: _pxToInches(bottom),
@@ -98,8 +106,12 @@ class PdfMargins {
   }
 
   /// [PdfMargins.cm] then return in Inches
-  factory PdfMargins.cm(
-      {num top = 0, num bottom = 0, num left = 0, num right = 0}) {
+  factory PdfMargins.cm({
+    num top = 0,
+    num bottom = 0,
+    num left = 0,
+    num right = 0,
+  }) {
     return PdfMargins.inches(
       top: _cmToInches(top),
       bottom: _cmToInches(bottom),
@@ -109,8 +121,12 @@ class PdfMargins {
   }
 
   /// [PdfMargins.mm] then return in Inches
-  factory PdfMargins.mm(
-      {num top = 0, num bottom = 0, num left = 0, num right = 0}) {
+  factory PdfMargins.mm({
+    num top = 0,
+    num bottom = 0,
+    num left = 0,
+    num right = 0,
+  }) {
     return PdfMargins.inches(
       top: _mmToInches(top),
       bottom: _mmToInches(bottom),

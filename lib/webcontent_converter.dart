@@ -2,26 +2,29 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+
+import 'package:dio/dio.dart';
 import 'package:easy_logger/easy_logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show MethodChannel, rootBundle;
 import 'package:flutter/widgets.dart';
-import 'package:dio/dio.dart';
-import 'package:webcontent_converter/webview_widget.dart';
-import 'page.dart';
 import 'package:puppeteer/puppeteer.dart' as pp;
+import 'package:webcontent_converter/webview_widget.dart';
 
+import 'page.dart';
 import 'web_support.dart';
+
 export 'page.dart';
 export 'webview_widget.dart';
 
+// ignore: avoid_classes_with_only_static_members
 /// [WebcontentConverter] will convert html, html file, web uri, into raw bytes image or pdf file
 class WebcontentConverter {
-  static const MethodChannel _channel =
-      MethodChannel('webcontent_converter');
+  static const MethodChannel _channel = MethodChannel('webcontent_converter');
 
   static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion') as String;
+    final String version =
+        await _channel.invokeMethod('getPlatformVersion') as String;
     return version;
   }
 
@@ -101,7 +104,7 @@ class WebcontentConverter {
   }) async {
     Uint8List result = Uint8List.fromList([]);
     try {
-      var response = await Dio().get(uri);
+      final Response<dynamic> response = await Dio().get(uri);
       final String content = response.data.toString();
       result = await contentToImage(
         content: content,
@@ -141,32 +144,39 @@ class WebcontentConverter {
     try {
       if (kIsWeb) {
         // TODO: web
-        var blob = await WebSupport.toBlob();
-        blob = blob.replaceAll(RegExp(r"data:image/png;base64,"), "");
+        String blob = await WebSupport.toBlob();
+        blob = blob.replaceAll("data:image/png;base64,", "");
 
-        results = base64.decode(blob);
-
-        return results;
+        return base64.decode(blob);
       }
       if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
         WebcontentConverter.logger.info("Desktop support");
-        final pp.Browser browser = await pp.puppeteer.launch(executablePath: executablePath);
+        final pp.Browser browser = await pp.puppeteer.launch(
+          executablePath: executablePath,
+        );
         final pp.Page page = await browser.newPage();
         await page.setContent(content, wait: pp.Until.load);
         await page.emulateMediaType(pp.MediaType.print);
-        final num offsetHeight = await page.evaluate<num>('document.body.offsetHeight');
-        final num offsetWidth = await page.evaluate<num>('document.body.offsetWidth');
+        final num offsetHeight = await page.evaluate<num>(
+          'document.body.offsetHeight',
+        );
+        final num offsetWidth = await page.evaluate<num>(
+          'document.body.offsetWidth',
+        );
         results = await page.screenshot(
           format: pp.ScreenshotFormat.png,
           clip: pp.Rectangle.fromPoints(
-              pp.Point(0, 0), pp.Point(offsetWidth, offsetHeight)),
+            const pp.Point(0, 0),
+            pp.Point(offsetWidth, offsetHeight),
+          ),
           fullPage: false,
           omitBackground: true,
         );
         await page.close();
       } else {
         WebcontentConverter.logger.info("Mobile support");
-        results = await _channel.invokeMethod('contentToImage', arguments) as Uint8List;
+        results = await _channel.invokeMethod('contentToImage', arguments)
+            as Uint8List;
       }
     } on Exception catch (e) {
       WebcontentConverter.logger.error("[method:contentToImage]: $e");
@@ -242,7 +252,7 @@ class WebcontentConverter {
   }) async {
     String? result;
     try {
-      var response = await Dio().get(uri);
+      final Response<dynamic> response = await Dio().get(uri);
       final String content = response.data.toString();
       result = await contentToPDF(
         content: content,
@@ -296,15 +306,19 @@ class WebcontentConverter {
     try {
       if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
         WebcontentConverter.logger.info("Desktop support");
-        var browser = await pp.puppeteer.launch(executablePath: executablePath);
-        var page = await browser.newPage();
-        await page.setContent(content,
-            wait: pp.Until.all([
-              pp.Until.load,
-              pp.Until.domContentLoaded,
-              pp.Until.networkAlmostIdle,
-              pp.Until.networkIdle,
-            ]));
+        final pp.Browser browser = await pp.puppeteer.launch(
+          executablePath: executablePath,
+        );
+        final pp.Page page = await browser.newPage();
+        await page.setContent(
+          content,
+          wait: pp.Until.all([
+            pp.Until.load,
+            pp.Until.domContentLoaded,
+            pp.Until.networkAlmostIdle,
+            pp.Until.networkIdle,
+          ]),
+        );
         await page.pdf(
           format: pp.PaperFormat.inches(
             width: format.width,
@@ -323,7 +337,10 @@ class WebcontentConverter {
         result = savedPath;
       } else if (Platform.isAndroid || Platform.isIOS) {
         WebcontentConverter.logger.info("Mobile support");
-        result = await _channel.invokeMethod('contentToPDF', arguments) as String;
+        result = await _channel.invokeMethod(
+          'contentToPDF',
+          arguments,
+        ) as String;
       } else {
         // todo web
         result = null;
