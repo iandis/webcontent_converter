@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:webcontent_converter2/webcontent_converter.dart';
+import 'package:webcontent_converter2/webcontent_converter2.dart';
 import 'package:webcontent_converter_example/screens/content_image_screen.dart';
 import 'package:webcontent_converter_example/screens/content_pdf_screen.dart';
 import 'package:webcontent_converter_example/screens/error_screen.dart';
@@ -18,7 +18,7 @@ Map<String, Widget Function(BuildContext)> routes = {
 Route<dynamic> onGenerateRoute(RouteSettings settings) {
   final name = settings.name;
   final arguments = settings.arguments;
-  WebcontentConverter.logger.info("name: $name || arguments: $arguments");
+  WebcontentConverter2.logger.info("name: $name || arguments: $arguments");
 
   switch (name) {
 

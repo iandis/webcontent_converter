@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:webcontent_converter2/webcontent_converter.dart';
+import 'package:webcontent_converter2/webcontent_converter2.dart';
 
 class WebUriToPDFScreen extends StatefulWidget {
   @override
@@ -43,10 +43,10 @@ class _WebUriToPDFScreenState extends State<WebUriToPDFScreen> {
   _convert() async {
     var dir = await getApplicationDocumentsDirectory();
     var savedPath = join(dir.path, "sample.pdf");
-    var result = await WebcontentConverter.webUriToPdf(
+    var result = await WebcontentConverter2.webUriToPdf(
         uri: "http://127.0.0.1:5500/example/assets/invoice.html",
         savedPath: savedPath);
-    WebcontentConverter.logger.info(result);
+    WebcontentConverter2.logger.info(result);
   }
 
   _previewPDF() async {}

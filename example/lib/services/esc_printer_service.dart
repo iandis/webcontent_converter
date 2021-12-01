@@ -2,7 +2,7 @@
 // import 'dart:typed_data';
 // import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 // import 'package:image/image.dart' as img;
-// import 'package:webcontent_converter2/webcontent_converter.dart';
+// import 'package:webcontent_converter2/webcontent_converter2.dart';
 
 // class ESCPrinterService {
 //   final Uint8List receipt;

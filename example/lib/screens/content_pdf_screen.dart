@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:printing/printing.dart';
-import 'package:webcontent_converter2/webcontent_converter.dart';
+import 'package:webcontent_converter2/webcontent_converter2.dart';
 import 'package:webcontent_converter_example/services/demo.dart';
 import 'package:webcontent_converter_example/services/webview_helper.dart';
 
@@ -56,7 +56,7 @@ class _ContentToPDFScreenState extends State<ContentToPDFScreen> {
     final content = Demo.getInvoiceContent();
     var dir = await getApplicationDocumentsDirectory();
     var savedPath = join(dir.path, "sample.pdf");
-    var result = await WebcontentConverter.contentToPDF(
+    var result = await WebcontentConverter2.contentToPDF(
       content: content,
       savedPath: savedPath,
       format: PaperFormat.a4,
@@ -70,7 +70,7 @@ class _ContentToPDFScreenState extends State<ContentToPDFScreen> {
     // await Printing.layoutPdf(
     //     onLayout: (PdfPageFormat format) => _file.readAsBytes());
 
-    WebcontentConverter.logger.info(result);
+    WebcontentConverter2.logger.info(result);
   }
 
   _previewPDF() async {}
