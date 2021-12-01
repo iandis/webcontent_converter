@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:webcontent_converter2/webcontent_converter.dart';
+import 'package:webcontent_converter2/webcontent_converter2.dart';
 
 class FilePathToPDFScreen extends StatefulWidget {
   @override
@@ -43,14 +43,14 @@ class _FilePathToPDFScreenState extends State<FilePathToPDFScreen> {
   _convert() async {
     var dir = await getApplicationDocumentsDirectory();
     var savedPath = join(dir.path, "sample.pdf");
-    var result = await WebcontentConverter.filePathToPdf(
+    var result = await WebcontentConverter2.filePathToPdf(
       path: "assets/invoice.html",
       savedPath: savedPath,
       format: PaperFormat.a4,
       margins: PdfMargins.px(top: 35, bottom: 35, right: 35, left: 35),
     );
 
-    WebcontentConverter.logger.info(result);
+    WebcontentConverter2.logger.info(result);
   }
 
   _previewPDF() async {}

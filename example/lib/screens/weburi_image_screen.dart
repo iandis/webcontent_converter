@@ -3,7 +3,7 @@ import 'dart:typed_data' show Uint8List;
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:webcontent_converter2/webcontent_converter.dart';
+import 'package:webcontent_converter2/webcontent_converter2.dart';
 
 class WebUriToImageScreen extends StatefulWidget {
   @override
@@ -43,7 +43,7 @@ class _WebUriToImageScreenState extends State<WebUriToImageScreen> {
 
   ///[convert html] content into bytes
   _convert() async {
-    var bytes = await WebcontentConverter.webUriToImage(
+    var bytes = await WebcontentConverter2.webUriToImage(
         uri: "http://127.0.0.1:5500/example/assets/receipt.html");
     if (bytes.length > 0) _saveFile(bytes);
   }
@@ -55,7 +55,7 @@ class _WebUriToImageScreenState extends State<WebUriToImageScreen> {
     var path = join(dir.path, "receipt.jpg");
     File file = File(path);
     await file.writeAsBytes(bytes);
-    WebcontentConverter.logger(file.path);
+    WebcontentConverter2.logger(file.path);
     setState(() => _file = file);
   }
 

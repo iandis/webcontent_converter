@@ -1,6 +1,8 @@
-# webcontent_converter
+# webcontent_converter2
 
-This plugin was made for developer to convert any webcontent, web uri to image bitmap or pdf file. This plugin use WebView on android, WKWebView on Ios and chromium for desktop support. This plugin was test for android, ios and desktop. 
+A fork of [webcontent_converter](https://pub.dev/packages/webcontent_converter)
+
+Plugin for converting any webcontent, web uri to image bitmap or pdf file. This plugin use WebView on android, WKWebView on Ios and chromium for desktop support. This plugin was test for android, ios and desktop. 
 
 ## Support :
 
@@ -22,7 +24,7 @@ This plugin was made for developer to convert any webcontent, web uri to image b
 Example: 
 
 ```
-var bytes = await WebcontentConverter.filePathToImage(path: "assets/receipt.html");
+var bytes = await WebcontentConverter2.filePathToImage(path: "assets/receipt.html");
 if (bytes.length > 0) _saveFile(bytes);
 ```
 
@@ -31,7 +33,7 @@ if (bytes.length > 0) _saveFile(bytes);
 Example:
 
 ```
-var bytes = await WebcontentConverter.webUriToImage(
+var bytes = await WebcontentConverter2.webUriToImage(
 uri: "http://127.0.0.1:5500/example/assets/receipt.html");
 if (bytes.length > 0) _saveFile(bytes);
 ```
@@ -42,7 +44,7 @@ Example:
 
 ```
 final content = Demo.getReceiptContent();
-var bytes = await WebcontentConverter.contentToImage(content: content);
+var bytes = await WebcontentConverter2.contentToImage(content: content);
 if (bytes.length > 0) _saveFile(bytes);
 ```
 
@@ -59,7 +61,7 @@ Example:
 ```
 var dir = await getApplicationDocumentsDirectory();
 var savedPath = join(dir.path, "sample.pdf");
-var result = await WebcontentConverter.filePathToPdf(
+var result = await WebcontentConverter2.filePathToPdf(
     path: "assets/invoice.html",
     savedPath: savedPath,
     format: PaperFormat.a4,
@@ -74,7 +76,7 @@ Example:
 ```
 var dir = await getApplicationDocumentsDirectory();
 var savedPath = join(dir.path, "sample.pdf");
-var result = await WebcontentConverter.webUriToPdf(
+var result = await WebcontentConverter2.webUriToPdf(
     uri: "http://127.0.0.1:5500/example/assets/invoice.html",
     savedPath: savedPath,
     format: PaperFormat.a4,
@@ -90,7 +92,7 @@ Example:
 final content = Demo.getInvoiceContent();
 var dir = await getApplicationDocumentsDirectory();
 var savedPath = join(dir.path, "sample.pdf");
-var result = await WebcontentConverter.contentToPDF(
+var result = await WebcontentConverter2.contentToPDF(
     content: content,
     savedPath: savedPath,
     format: PaperFormat.a4,
