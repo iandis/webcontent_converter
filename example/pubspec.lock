@@ -378,13 +378,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  webcontent_converter:
+  webcontent_converter2:
     dependency: "direct main"
     description:
       path: ".."
       relative: true
     source: path
-    version: "0.0.6+2"
+    version: "0.0.7"
   win32:
     dependency: transitive
     description:

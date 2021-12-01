@@ -9,10 +9,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show MethodChannel, rootBundle;
 import 'package:flutter/widgets.dart';
 import 'package:puppeteer/puppeteer.dart' as pp;
-import 'package:webcontent_converter/webview_widget.dart';
 
 import 'page.dart';
 import 'web_support.dart';
+import 'webview_widget.dart';
 
 export 'page.dart';
 export 'webview_widget.dart';
