@@ -1,18 +1,20 @@
 name: webcontent_converter
-description: This plugin was made for developer to convert any webcontent, web uri to image bitmap or pdf file. This plugin use WebView on android, WKWebView on Ios and chromium for desktop support.
+description: This plugin was made for developer to convert any webcontent, web
+  uri to image bitmap or pdf file. This plugin use WebView on android, WKWebView
+  on Ios and chromium for desktop support.
 version: 0.0.6+2
 homepage: https://github.com/kechankrisna/webcontent_converter.git
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
-  flutter: ">=1.20.0"
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=2.2.0"
 
 dependencies:
+  dio: ^4.0.4
+  easy_logger: ^0.0.2
   flutter:
     sdk: flutter
-  puppeteer: ^2.0.0  
-  dio: ^4.0.0  
-  easy_logger: ^0.0.2  
+  puppeteer: ^2.4.0
 
 dev_dependencies:
   flutter_test:
@@ -20,7 +22,6 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter.
 flutter:
   # This section identifies this Flutter project as a plugin project.
@@ -34,7 +35,6 @@ flutter:
         pluginClass: WebcontentConverterPlugin
       ios:
         pluginClass: WebcontentConverterPlugin
-
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -45,7 +45,6 @@ flutter:
   #
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
-
   # To add custom fonts to your plugin package, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
