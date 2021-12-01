@@ -1,25 +1,21 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:easy_logger/easy_logger.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show MethodChannel, rootBundle;
 import 'package:flutter/widgets.dart';
 import 'package:puppeteer/puppeteer.dart' as pp;
 
 import 'page.dart';
-import 'web_support.dart';
+import 'webcontent_to_image_default.dart'
+    if (dart.library.html) 'webcontent_to_image_web.dart' as _content_to_image;
 import 'webview_widget.dart';
 
-export 'page.dart';
-export 'webview_widget.dart';
-
 // ignore: avoid_classes_with_only_static_members
-/// [WebcontentConverter] will convert html, html file, web uri, into raw bytes image or pdf file
-class WebcontentConverter {
+/// [WebcontentConverter2] will convert html, html file, web uri, into raw bytes image or pdf file
+class WebcontentConverter2 {
   static const MethodChannel _channel = MethodChannel('webcontent_converter');
 
   static Future<String> get platformVersion async {
@@ -28,11 +24,11 @@ class WebcontentConverter {
     return version;
   }
 
-  /// ## `WebcontentConverter.logger`
+  /// ## `WebcontentConverter2.logger`
   /// `allow to pretty text`
   /// #### Example:
   /// ```
-  /// WebcontentConverter.logger('Your log text', level: LevelMessages.info);
+  /// WebcontentConverter2.logger('Your log text', level: LevelMessages.info);
   /// ```
   static final logger = EasyLogger(
     name: 'webcontent_converter',
@@ -52,11 +48,11 @@ class WebcontentConverter {
    * Methods: [filePathToImage], [webUriToImage], [contentToImage]
    */
 
-  /// ## `WebcontentConverter.filePathToImage`
+  /// ## `WebcontentConverter2.filePathToImage`
   /// `this method read content from file vai path then call contentToImage`
   /// #### Example:
   /// ```
-  ///  var bytes = await WebcontentConverter.filePathToImage(path: "assets/receipt.html");
+  ///  var bytes = await WebcontentConverter2.filePathToImage(path: "assets/receipt.html");
   /// if (bytes.length > 0){
   ///   var dir = await getTemporaryDirectory();
   ///   var path = join(dir.path, "receipt.jpg");
@@ -79,17 +75,17 @@ class WebcontentConverter {
         executablePath: executablePath,
       );
     } on Exception catch (e) {
-      WebcontentConverter.logger.error("[method:filePathToImage]: $e");
+      logger.error("[method:filePathToImage]: $e");
       throw Exception("Error: $e");
     }
     return result;
   }
 
-  /// ## `WebcontentConverter.webUriToImage`
+  /// ## `WebcontentConverter2.webUriToImage`
   /// `This method read content from uri by using dio then call contentToImage`
   /// #### Example:
   /// ```
-  /// var bytes = await WebcontentConverter.webUriToImage(uri: "http://127.0.0.1:5500/example/assets/receipt.html");
+  /// var bytes = await WebcontentConverter2.webUriToImage(uri: "http://127.0.0.1:5500/example/assets/receipt.html");
   /// if (bytes.length > 0){
   ///   var dir = await getTemporaryDirectory();
   ///   var path = join(dir.path, "receipt.jpg");
@@ -112,18 +108,18 @@ class WebcontentConverter {
         executablePath: executablePath,
       );
     } on Exception catch (e) {
-      WebcontentConverter.logger.error("[method:webUriToImage]: $e");
+      logger.error("[method:webUriToImage]: $e");
       throw Exception("Error: $e");
     }
     return result;
   }
 
-  /// ## `WebcontentConverter.contentToImage`
+  /// ## `WebcontentConverter2.contentToImage`
   /// `This method use html content directly to convert html to List<Int> image`
   /// ### Example:
   /// ```
   /// final content = Demo.getReceiptContent();
-  /// var bytes = await WebcontentConverter.contentToImage(content: content);
+  /// var bytes = await WebcontentConverter2.contentToImage(content: content);
   /// if (bytes.length > 0){
   ///   var dir = await getTemporaryDirectory();
   ///   var path = join(dir.path, "receipt.jpg");
@@ -135,54 +131,12 @@ class WebcontentConverter {
     required String content,
     double duration = 2000,
     String? executablePath,
-  }) async {
-    final Map<String, dynamic> arguments = {
-      'content': content,
-      'duration': duration
-    };
-    Uint8List results = Uint8List.fromList([]);
-    try {
-      if (kIsWeb) {
-        // TODO: web
-        String blob = await WebSupport.toBlob();
-        blob = blob.replaceAll("data:image/png;base64,", "");
-
-        return base64.decode(blob);
-      }
-      if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
-        WebcontentConverter.logger.info("Desktop support");
-        final pp.Browser browser = await pp.puppeteer.launch(
-          executablePath: executablePath,
-        );
-        final pp.Page page = await browser.newPage();
-        await page.setContent(content, wait: pp.Until.load);
-        await page.emulateMediaType(pp.MediaType.print);
-        final num offsetHeight = await page.evaluate<num>(
-          'document.body.offsetHeight',
-        );
-        final num offsetWidth = await page.evaluate<num>(
-          'document.body.offsetWidth',
-        );
-        results = await page.screenshot(
-          format: pp.ScreenshotFormat.png,
-          clip: pp.Rectangle.fromPoints(
-            const pp.Point(0, 0),
-            pp.Point(offsetWidth, offsetHeight),
-          ),
-          fullPage: false,
-          omitBackground: true,
-        );
-        await page.close();
-      } else {
-        WebcontentConverter.logger.info("Mobile support");
-        results = await _channel.invokeMethod('contentToImage', arguments)
-            as Uint8List;
-      }
-    } on Exception catch (e) {
-      WebcontentConverter.logger.error("[method:contentToImage]: $e");
-      throw Exception("Error: $e");
-    }
-    return results;
+  }) {
+    return _content_to_image.contentToImage(
+      content: content,
+      duration: duration,
+      executablePath: executablePath,
+    );
   }
 
   /**
@@ -191,13 +145,13 @@ class WebcontentConverter {
    * Methods: [filePathToPdf], [webUriToPdf], [contentToPDF]
    */
 
-  /// ## `WebcontentConverter.filePathToPdf`
+  /// ## `WebcontentConverter2.filePathToPdf`
   /// `This method read content from file vai path`
   /// #### Example:
   /// ```
   /// var dir = await getApplicationDocumentsDirectory();
   /// var savedPath = join(dir.path, "sample.pdf");
-  /// var result = await WebcontentConverter.filePathToPdf(
+  /// var result = await WebcontentConverter2.filePathToPdf(
   ///   path: "assets/invoice.html",
   ///   savedPath: savedPath,
   ///   format: PaperFormat.a4,
@@ -225,19 +179,19 @@ class WebcontentConverter {
         executablePath: executablePath,
       );
     } on Exception catch (e) {
-      WebcontentConverter.logger.error("[method:filePathToPdf]: $e");
+      logger.error("[method:filePathToPdf]: $e");
       throw Exception("Error: $e");
     }
     return result;
   }
 
-  /// ## WebcontentConverter.webUriToPdf
+  /// ## WebcontentConverter2.webUriToPdf
   /// `This method read content from uri by using dio`
   /// #### Example:
   /// ```
   /// var dir = await getApplicationDocumentsDirectory();
   /// var savedPath = join(dir.path, "sample.pdf");
-  /// var result = await WebcontentConverter.webUriToPdf(
+  /// var result = await WebcontentConverter2.webUriToPdf(
   ///     uri: "http://127.0.0.1:5500/example/assets/invoice.html",
   ///     savedPath: savedPat,
   /// );
@@ -263,20 +217,20 @@ class WebcontentConverter {
         executablePath: executablePath,
       );
     } on Exception catch (e) {
-      WebcontentConverter.logger.error("[method:webUriToImage]: $e");
+      logger.error("[method:webUriToImage]: $e");
       throw Exception("Error: $e");
     }
     return result;
   }
 
-  /// ## `WebcontentConverter.contentToPDF`
+  /// ## `WebcontentConverter2.contentToPDF`
   /// `This method use html content directly to convert html to pdf then return path`
   /// #### Example:
   /// ```
   /// final content = Demo.getInvoiceContent();
   /// var dir = await getApplicationDocumentsDirectory();
   /// var savedPath = join(dir.path, "sample.pdf");
-  /// var result = await WebcontentConverter.contentToPDF(
+  /// var result = await WebcontentConverter2.contentToPDF(
   ///     content: content,
   ///     savedPath: savedPath,
   ///     format: PaperFormat.a4,
@@ -299,13 +253,13 @@ class WebcontentConverter {
       'margins': _margins.toMap(),
       'format': format.toMap(),
     };
-    WebcontentConverter.logger.info(arguments['savedPath'] as String);
-    WebcontentConverter.logger.info(arguments['margins'] as Map<String, num>);
-    WebcontentConverter.logger.info(arguments['format'] as Map<String, num>);
+    logger.info(arguments['savedPath'] as String);
+    logger.info(arguments['margins'] as Map<String, num>);
+    logger.info(arguments['format'] as Map<String, num>);
     String? result;
     try {
       if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
-        WebcontentConverter.logger.info("Desktop support");
+        logger.info("Desktop support");
         final pp.Browser browser = await pp.puppeteer.launch(
           executablePath: executablePath,
         );
@@ -336,7 +290,7 @@ class WebcontentConverter {
         await page.close();
         result = savedPath;
       } else if (Platform.isAndroid || Platform.isIOS) {
-        WebcontentConverter.logger.info("Mobile support");
+        logger.info("Mobile support");
         result = await _channel.invokeMethod(
           'contentToPDF',
           arguments,
@@ -346,7 +300,7 @@ class WebcontentConverter {
         result = null;
       }
     } on Exception catch (e) {
-      WebcontentConverter.logger.error("[method:contentToPDF]: $e");
+      logger.error("[method:contentToPDF]: $e");
       throw Exception("Error: $e");
     }
     return result;

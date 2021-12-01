@@ -41,7 +41,7 @@ class WebViewWidget extends StatelessWidget {
     creationParams['width'] = width;
     creationParams['height'] = height;
     creationParams['content'] = content;
-    // WebcontentConverter.logger("creationParams $creationParams");
+    // WebcontentConverter2.logger("creationParams $creationParams");
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return PlatformViewLink(
