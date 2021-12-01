@@ -1,3 +1,7 @@
+## 0.0.7
+* update to null-safety
+* update dependencies
+* format codes using `lint`
 ## 0.0.6+2
 
 * fixed convert pdf on desktop (macos)
